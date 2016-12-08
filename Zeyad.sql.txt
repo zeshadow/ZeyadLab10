@@ -1,0 +1,337 @@
+use ayoubz;
+
+DROP TABLE IF EXISTS account;
+CREATE TABLE account(account_id int auto_increment primary key, email varchar(256) unique,first_name varchar(50), last_name varchar(50));
+
+drop table if exists company;
+create table company(company_id int auto_increment primary key, company_name varchar(50) unique);
+
+DROP TABLE IF EXISTS address;
+CREATE TABLE address(address_id int auto_increment primary key, street varchar(256), zip_code int);
+
+drop table if exists skill;
+create table skill( skill_id int auto_increment primary key, skill_name varchar(50)unique, description varchar(1024));
+
+drop table if exists resumes;
+create table resumes(resume_id int auto_increment primary key, account_id int, resume_name varchar(50),
+	foreign key (account_id) references account(account_id) on delete cascade);
+
+DROP TABLE IF EXISTS school;
+CREATE TABLE school( school_id int auto_increment primary key, school_name varchar(50) unique, address_id int,
+	foreign key (address_id) references address(address_id) on delete cascade) ;
+
+drop table if exists account_skills;
+create table account_skills( account_id int auto_increment, skill_id int, primary key(account_id,skill_id),
+	foreign key (account_id) references account(account_id) on delete cascade,
+	foreign key (skill_id) references skill(skill_id) on delete cascade);
+
+DROP TABLE IF EXISTS account_school;
+CREATE TABLE account_school(account_id int auto_increment, school_id int,primary key (account_id, school_id), start_date varchar(50), end_date Varchar(50), gpa double,
+    foreign key(account_id) REFERENCES account(account_id) on delete cascade,
+	foreign key(school_id) references school(school_id) on delete cascade); 
+
+
+
+DROP TABLE IF EXISTS resume_school;
+CREATE TABLE resume_school(resume_id int auto_increment, school_id int ,primary key(resume_id, school_id),
+	foreign key (resume_id) references resumes(resume_id) on delete cascade,
+    foreign key (school_id) references school(school_id) on delete cascade);
+
+DROP TABLE IF EXISTS account_company;
+CREATE TABLE account_company(account_id int auto_increment , address_id int, primary key(account_id, address_id), company_id int,
+	foreign key (address_id) references address(address_id) on delete cascade,
+    foreign key (company_id) references company(company_id) on delete cascade);
+
+
+
+drop table if exists resume_company;
+create table resume_company(resume_id int auto_increment, company_id int,primary key(resume_id,company_id),
+	date_shared varchar(50), was_hired int,
+    foreign key (resume_id) references resumes(resume_id) on delete cascade,
+    foreign key (company_id) references company(company_id) on delete cascade);
+
+
+
+drop table if exists resume_skill;
+create table resume_skill(skill_id int auto_increment, resume_id int, primary key(skill_id, resume_id),
+	foreign key (resume_id) references resumes(resume_id) on delete cascade,
+    foreign key (skill_id) references skill(skill_id) on delete cascade);
+
+
+insert into account(email,first_name,last_name) values ('bob@gmail','bob', 'smith');
+insert into account(email, first_name,last_name) values ('tedd@live', 'tedd', 'smithy');
+insert into account(email, first_name,last_name) values('jen@yahoo' , 'jenny', 'spinner');
+insert into account (email, first_name,last_name) values('harry@place' ,'harry','balls');
+insert into account(email, first_name,last_name) values ('larry@thing', 'larry', 'lars');
+
+insert into company(company_name) values ('pear');
+insert into company(company_name) values('microhard');
+insert into company(company_name) values('pico');
+insert into company(company_name) values('samdung');
+insert into company(company_name) values('cockcast');
+
+insert into address(street,zip_code) values('bev hills',90210);
+insert into address(street,zip_code) values('hell st',666);
+insert into address(street,zip_code) values('universe place',42);
+insert into address(street,zip_code) values('pie st',31415926);
+insert into address(street,zip_code) values('negative st',-1);
+
+insert into skill(skill_name,description) values('ex top gear host','either a short guy, an angry guy, or a slow driver');
+insert into skill(skill_name,description) values('topgun pilot','semi homoerrotic tensions with planes');
+insert into skill(skill_name,description) values('rock climbing','hasnt fallen yet');
+insert into skill(skill_name,description) values('calc prof', 'masters in multivariable calculus in n-dimension, cant do algebra');
+insert into skill(skill_name,description) values('bounty hunter','most dangerous game');
+
+insert into resumes(account_id,resume_name) values(1,'billy bob');
+insert into resumes(account_id,resume_name) values(3,'pongo');
+insert into resumes(account_id,resume_name) values(2,'butch cassidy');
+insert into resumes(account_id,resume_name) values(4,'homeless');
+insert into resumes(account_id,resume_name) values(5,'lost');
+
+insert into school(school_name,address_id) values('the worsts',1);
+insert into school(school_name,address_id) values('the bestests', 2);
+insert into school(school_name,address_id) values('the second best', 3);
+insert into school(school_name,address_id) values('james may highschool',4);
+insert into school(school_name,address_id) values('not a school',5);
+
+insert into account_skills(skill_id) values (3);
+insert into account_skills(skill_id) values (1);
+insert into account_skills(skill_id) values (2);
+insert into account_skills(skill_id) values (4);
+insert into account_skills(skill_id) values (5);
+
+insert into account_school(school_id,start_date,end_date,gpa) values (1,'10/12/19','10/12/91',3.99); 
+insert into account_school(school_id,start_date,end_date,gpa) values (1,'10/53/91','02/17/93',3.44);
+insert into account_school(school_id,start_date,end_date,gpa) values (3,'4/23/90','12/7/92',2.98);## not working 
+insert into account_school(school_id,start_date,end_date,gpa) values (4,'6/8/06','9/20/09',6.01);
+insert into account_school(school_id,start_date,end_date,gpa) values (4,'3/5/10','3/29/12',3.51);
+insert into account_school(school_id,start_date,end_date,gpa) values (6,'3/5/10','3/29/12',3.51);## not working 
+
+insert into resume_school(school_id) values (1);
+insert into resume_school(school_id) values (2);
+insert into resume_school(school_id) values (3); # not working
+insert into resume_school(school_id) values (4);
+insert into resume_school(school_id) values (6);
+
+insert into account_company(address_id,company_id) values(1,5);
+insert into account_company(address_id,company_id) values(2,4);
+insert into account_company(address_id,company_id) values(3,3);
+insert into account_company(address_id,company_id) values(4,2);
+insert into account_company(address_id,company_id) values(5,1);
+
+insert into resume_company(company_id,date_shared,was_hired) values (1,'10/12/16',1);
+insert into resume_company(company_id,date_shared,was_hired) values (1,'10/13/16',1);
+insert into resume_company(company_id,date_shared,was_hired) values (1,'10/14/16',0);
+insert into resume_company(company_id,date_shared,was_hired) values (1,'10/15/16',0);
+insert into resume_company(company_id,date_shared,was_hired) values (2,'10/16/16',1);
+
+insert into resume_skill(resume_id) values (2);
+insert into resume_skill(resume_id) values (3);
+insert into resume_skill(resume_id) values (4);
+insert into resume_skill(resume_id) values (5);
+insert into resume_skill(resume_id) values (6);
+
+
+
+SELECT * FROM account;
+SELECT * FROM company;
+SELECT * FROM address;
+SELECT * FROM resumes;
+SELECT * FROM school;
+SELECT * FROM account_skills;
+SELECT * FROM account_school;
+SELECT * FROM resume_school;
+SELECT * FROM account_company;
+SELECT * FROM resume_company;
+SELECT * FROM resume_skill;
+
+
+select company_name,AVG(GPA) as average_gpa
+from company c
+left join resume_company rc on c.company_id=rc.company_id
+left join resumes r on r.resume_id=rc.resume_id
+left join resume_school rs on rs.resume_id=r.resume_id
+left join account_school as1 on as1.account_id=r.account_id
+where rc.was_hired=1
+group by company_name;
+
+
+select first_name,last_name
+from account a
+join resumes r On r.account_id=a.account_id
+join resume_company rc on rc.resume_id=r.resume_id
+where rc.was_hired=1
+;
+
+
+
+#####################################################################################################
+
+
+
+
+
+select company_name
+from company c
+join resume_company a on a.company_id=c.company_id 
+where c.company_id=1
+;
+
+select count(company_name)
+from company c
+join resume_company a on a.company_id=c.company_id
+where c.company_id=1;
+
+select count(company_name)as num_shared
+from company c 
+join resume_company a on a.company_id=c.company_id
+where c.company_id=1;
+
+select first_name,last_name , count(company_name) as num_shared
+from account a
+left join resumes r on r.account_id = a.account_id
+left join resume_company rc on rc.resume_id=r.resume_id
+left join company c on c.company_id=rc.company_id
+group by a.account_id
+;
+
+
+select first_name,last_name , count(company_name) as num_shared
+from account a
+left join resumes r on r.account_id = a.account_id
+left join resume_company rc on rc.resume_id=r.resume_id
+left join company c on c.company_id=rc.company_id
+group by a.account_id
+order by last_name
+;
+
+select first_name,last_name , count(company_name) as num_shared
+from account a
+left join resumes r on r.account_id = a.account_id
+left join resume_company rc on rc.resume_id=r.resume_id
+left join company c on c.company_id=rc.company_id
+group by a.account_id
+having count(rc.resume_id)>1
+;
+
+
+######################################################################################################
+
+
+
+
+#1 Create a VIEW called AccountCompanyView that returns the company_id, company name, email, account_id, account first and last name, and was_hired field for all shared resumes.
+
+
+	#2 Write a SQL Query (also called a SQL Statement) that uses the VIEW above, but only returns the records for an account you specifiy by email address and if they were hired.
+
+
+create or replace view AccountCompanyView as
+select c.company_id,company_name, email, a.account_id,first_name,last_name, was_hired
+from account a
+left join resumes r on r.account_id=a.account_id
+left join resume_company rc on rc.resume_id=r.resume_id
+left join company c on c.company_id=rc.company_id
+;
+
+select company_id,company_name, email, account_id,first_name,last_name, was_hired
+from AccountCompanyView
+where was_hired=1 AND email='larry@thing'
+;
+
+
+
+#STORED PROCEDURE EXERCISE
+
+	#1 Create a stored procedure that takes in an account's email address and returns all the company name, company id they have submitted resumes to and if they were hired.
+        
+    #2 Create a VIEW that returns the account_id, email, skill_id, and skill name for all the skills each account has.
+	#  Then create a stored procedure that takes in an email address and returns the skills for that specific user.
+    
+
+
+drop procedure if exists hired;
+DELIMITER //
+
+create procedure hired(_email varchar(255))
+begin
+select a.account_id,skill_id,company_name, company_id, was_hired
+  from AccountCompanyView a
+  left join account_skills as1 on as1.account_id = a.account_id
+  where email=_email and was_hired!='null';
+end //
+
+
+delimiter ;
+
+call hired('larry@thing');
+
+
+
+
+create or replace view hired_result as
+select a.account_id, email, s.skill_id, skill_name
+from  AccountCompanyView a
+left join account_skills as1 on as1.account_id = a.account_id
+left join skill s on s.skill_id= as1.skill_id;
+
+select account_id, email, skill_id, skill_name
+from hired_result h 
+group by skill_id
+;
+
+drop procedure if exists final;
+delimiter //
+create procedure final(_email varchar(255))
+begin
+select account_id, email, skill_id, skill_name
+from hired_result h 
+where email=_email
+group by skill_id;
+end //
+delimiter ;
+
+
+call final('larry@thing');
+
+
+drop function if exists funct;
+delimiter //
+create function funct(compName varchar(255)) returns double
+begin
+declare av double;
+
+select avg(gpa) into av
+from account_school as1
+left join account a on a.account_id=as1.account_id
+left join account_company ac on a.account_id=ac.account_id
+left join company c on ac.company_id=c.company_id
+where compName = c.company_name;
+
+return av;
+
+end //
+
+delimiter ;
+
+select funct('microhard');
+
+select funct(company_name) from company;
+#where funct(company_name)!='null';
+
+
+
+########################################################################################################
+
+
+select ac.company_id, company_name, count(was_hired)
+from account_company ac
+left join company c on ac.company_id=c.company_id
+left join resume_company rc on ac.company_id = c.company_id
+where rc.was_hired=1
+group by company_name
+;
+
+
+
+
