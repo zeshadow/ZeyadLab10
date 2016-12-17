@@ -335,3 +335,6 @@ group by company_name
 
 
 
+create or replace view school_view as
+select s.*, a.street, a.zip_code from school s
+join address a on a.address_id = s.address_id;
